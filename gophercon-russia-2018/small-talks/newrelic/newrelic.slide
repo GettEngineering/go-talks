@@ -1,0 +1,172 @@
+Newrelic in Gett
+Gett RnD Small Talk
+16:45 17 Mar 2018
+Tags: golang, newrelic
+
+Zaur Abasmirzoev
+Team Leader, Gett RnD
+zaur@gett.com
+https://gett.com/ru/
+
+* Newrelic
+
+Platform lets engineers measure and monitor the performance of their applications and infrastructure.
+
+.image images/product.jpg
+
+* From Ruby
+
+.image images/ruby-apm-app.png
+
+* to Golang
+
+.image images/apm-go-agent.png
+
+* Dashboard
+
+.image images/apm-golang-dashboard-screen.png
+
+* Getting started
+
+Install the package:
+
+    go get github.com/newrelic/go-agent
+
+Initialize config and application:
+
+    config := newrelic.NewConfig("Your_App_Name", "__YOUR_NEW_RELIC_LICENSE_KEY__")
+    app, err := newrelic.NewApplication(config)
+
+Wrap an HTTP handler:
+
+    http.HandleFunc(newrelic.WrapHandleFunc(app, "/users", usersHandler))
+
+* Dashboard
+
+.image images/apm-go-basic.png
+
+* Problems: names of transactions
+
+.code code/newrelic-wrap-handler.go
+
+.image images/apm-all-transactions.png
+
+* Use gorrila/mux
+
+.code code/nrgorilla-instrument.go
+
+Usage:
+
+	r := mux.NewRouter()
+	r.Handle("/api/v1/{env}/callers/{phone}", h).Methods("GET")
+	r.NotFoundHandler = your.NotFoundHandler(logger)
+	r = nrgorilla.InstrumentRoutes(r, app)
+
+* Set web transaction name
+
+.code code/nrgorilla-route-name.go
+
+.image images/apm-transactions-named.png
+
+* Problems: access to txn object
+
+    func myHandler(w http.ResponseWriter, r *http.Request) {
+        if txn, ok := w.(newrelic.Transaction); ok {
+            txn.NoticeError(errors.New("my error message"))
+        }
+    }
+
+.image images/apm-errors.png
+
+* Use context for txn
+
+.code code/wrap-ctx.go
+
+.code code/txn-ctx.go
+
+* Segments
+
+.image images/segments-dashboard.png
+
+* Usage segments
+
+Function segments
+
+    segment := newrelic.StartSegment(txn, "mySegmentName")
+    // ... code you want to time here ...
+    segment.End()
+
+Datastore segments
+
+    s := newrelic.DatastoreSegment{
+        ...
+        ParameterizedQuery: "INSERT INTO users (name, age) VALUES ($1, $2)",
+    }
+    s.StartTime = newrelic.StartSegmentNow(txn)
+    // ... make the datastore call
+    s.End()
+
+External segments
+
+    s := newrelic.StartExternalSegment(txn, req)
+    response, err := http.DefaultClient.Do(req)
+    s.Response = response
+    s.End()
+
+* Transaction trace
+
+.image images/trace-segments.png
+
+* Transaction map
+
+.image images/transaction-map.png
+
+* Segment helpers
+
+.code code/segment-helpers.go
+
+* Custom attributes
+
+	txn := newrelicutil.TxnFromContext(ctx)
+	if txn != nil {
+		txn.AddAttribute("X-Request-Id", ctx.Value("X-Request-Id"))
+	}
+
+.image images/apm-attributes.png
+
+* Configure
+
+Disable for dev/test env
+
+    config.Enabled = false
+
+Trace everything
+
+	config.TransactionTracer.Enabled = true
+	config.TransactionTracer.Threshold.IsApdexFailing = false
+	config.TransactionTracer.Threshold.Duration = 5 * time.Millisecond
+	config.TransactionTracer.SegmentThreshold = 100 * time.Microsecond
+	config.TransactionTracer.StackTraceThreshold = 5 * time.Millisecond
+	config.Logger = &mocks.NrLogger{Logger: logger}
+
+Disable cross application tracing
+
+    config.CrossApplicationTracer.Enabled = false
+
+* Main problem
+
+Use the transaction in a *single* goroutine
+
+The restrictions of "non overlapping segments", and "only use the transaction in
+a single goroutine" exist to ensure that the bands in our stacked area charts
+sum to the response time. The idea is that the "exclusive time" of each segment
+(the duration minus the duration of the nested "children" segments) in a
+transaction should add to the response time. If these restrictions are violated
+you may get weird/unreliable charts and data.
+
+* Resource
+
+- Introduction to New Relic fo Go: [[https://docs.newrelic.com/docs/agents/go-agent/get-started/introduction-new-relic-go][docs.newrelic.com]]
+- Github repo: [[https://github.com/newrelic/go-agent]]
+- New Relic site: [[https://newrelic.com/]]
+- Google: [[https://www.google.ru/search?q=newrelic+golang]]

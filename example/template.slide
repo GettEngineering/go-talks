@@ -1,0 +1,40 @@
+Main topic
+Gett RU RnD Small Talk
+18:00 13 Mar 2018
+Tags: tag1, tag2, tag3
+
+John Doe
+Server Developer, Gett RU RnD
+doe@gett.com
+https://gett.com/ru/
+@Gett_RU
+
+* Slide 1
+
+Some text.
+
+- list option 1
+- list option 2
+- list option 3
+
+Link: [[https://example.com]]
+Another link: [[https://example.com][Example website]]
+
+.background images/background.png
+
+* Slide 2
+
+More text here.
+
+*Example*of*bold*text*with*spaces*
+
+.caption Caption example
+
+.background images/background.png
+
+* Slide 3
+
+Some code:
+.code code.go
+
+.background images/background.png

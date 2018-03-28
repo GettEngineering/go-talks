@@ -1,0 +1,162 @@
+Vendoring in Go: present and future
+Gett RnD Small Talk
+14:05 17 Mar 2018
+Tags: vendor, semver, versioning
+
+Ilya Danilkin
+Server Developer, Gett RnD
+danilkin@gett.com
+https://gett.com/ru/
+
+* Short history of vendoring
+
+.background images/background.png
+
+- Mar 2012: Keith Rarick: [[https://github.com/kr/goven][Goven]] - copy deps into repo, updating import paths
+- *Sep*2013:* Keith Rarick: [[https://github.com/tools/godep][Godep]] - copy deps *without* updating import paths
+- Nov 2013: Go v1.2, import compatibility rule
+- Mar 2014: Gustavo Niemeyer: [[https://gopkg.in]] - stable, versioned APIs
+- Jun 2015: Go v1.5, Keith Rarick: /vendor proposal, experimental
+- *Aug*2015:* Dave Cheney: [[https://github.com/constabulary/gb][gb]], SemVer, Hyrum's law
+- *Jul*2016:* GopherCon 2016: committee for unified vendoring tool, Sam Boyer: [[https://github.com/golang/dep][golang/dep]]
+- *20.02.2018:* [[https://research.swtch.com/vgo][vgo]]
+
+* Current state
+
+.background images/background.png
+
+Official experimental tool - [[https://golang.github.io/dep/][golang/dep]]
+Workflow:
+- Init: *dep*init*
+- Setup/pruning: *dep*ensure*
+- Update: *dep*ensure*-update*...*
+
+Honorable mentions:
+- [[https://github.com/Masterminds/glide]] - no longer developed
+- [[https://github.com/kardianos/govendor]]
+
+.image images/DigbyShadows.png
+
+* vgo
+
+.background images/background.png
+
+Main principles:
+
+- import compatibility rule:
+
+    If an old package and a new package have the same import path,
+    the new package must be backwards-compatible with the old package.
+
+- minimal version selection - use the *oldest* allowed version
+- introduce Go module concept
+- retrofit into the existing go command
+
+* Hello, world
+
+.background images/background.png
+
+.code code/hello.go
+
+.image images/hello_world.png
+
+* First build
+
+.background images/background.png
+
+Create *go.mod* and build the package:
+
+.code code/init.sh
+
+* Go.mod
+
+.background images/background.png
+
+.code code/go.mod
+
+Full module set:
+
+.code code/modules.sh
+
+* Next build
+
+.background images/background.png
+
+.code code/next.sh
+
+.image images/gopher.png
+
+.caption Source: [[https://www.flickr.com/photos/sloalan/569986220/in/photolist-Snk3C-otiixZ-r79Ua8-ot9cHM-qrBry7-otqgVd-roCjpg-od83Dc-ouQrLG-r7sda1-ot1owM-ov6SA3-osLUXQ-ouwcSY-qs5vHW-othEDD-roYrsa-rmLwAh-odeoks-oychVg-r74xSq-ov3saK-Sp96H-roWLEy-xgeNin-owapVH-roUvN2-oeWLYe-ouJ5HV-od83ag-r99DJT-otgJWL-rqo75P-r7zVWV-rpNe1m-ouJgwi-ousy35-trvdgZ-tJbaW6-otAwtF-odaVtL-qrBARq-ukfZY4-w9xn9C-x4f5xQ-x78yFz-oeHt6p-xHxmy1-xo6AL1-xDdvZF][Alan Schmierer / Flickr]]
+
+* Upgrading
+
+.background images/background.png
+
+.code code/upgrade_check.sh
+
+Upgrade only golang.org/x/text:
+
+.code code/upgrade.sh
+
+* Test package and dependencies
+
+.background images/background.png
+
+.code code/test.sh
+
+* Upgrade all
+
+.background images/background.png
+
+.code code/upgrade_all.sh
+
+* Check if something broke
+
+.background images/background.png
+
+.code code/check.sh
+
+* Fix it - downgrade!
+
+.background images/background.png
+
+.code code/downgrade.sh
+
+* Remove bad dependency
+
+.background images/background.png
+
+.code code/remove_dep.sh
+
+* Exclude dependency version
+
+.code code/exclude.sh
+
+* Replace dependency locally
+
+.background images/background.png
+
+.code code/replace.sh
+
+* Backwards compatibility
+
+.background images/background.png
+
+.code code/backwards.sh
+
+* Try out vgo
+
+.background images/background.png
+
+- Start tagging versions in your repositories
+- Create and check in *go.mod* files, or...
+- ... dep, glide, govendor, glock, godep, godeps, govend, gvt -> go.mod
+- *git*clone*, *cd*, and start writing. Anywhere. *No*GOPATH*required*.
+
+* Resources
+
+.background images/background.png
+
+- Russ Cox: [[https://research.swtch.com/vgo][Go & Versioning]]
+- Golang wiki: [[https://github.com/golang/go/wiki/vgo][vgo]]
+- Brian Ketelsen: [[https://www.gophersnacks.com/programs/using-vgo-for-go-dependency-management][Using vgo for Go Dependency Management]]

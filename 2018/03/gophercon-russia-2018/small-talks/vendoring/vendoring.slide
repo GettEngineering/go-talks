@@ -1,12 +1,13 @@
 Vendoring in Go: present and future
 Gett RnD Small Talk
 14:05 17 Mar 2018
-Tags: vendor, semver, versioning
+Tags: golang, vendor, vgo
 
 Ilya Danilkin
 Server Developer, Gett RnD
 danilkin@gett.com
 https://gett.com/ru/
+@nezorflame
 
 * Short history of vendoring
 

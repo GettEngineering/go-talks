@@ -1,0 +1,222 @@
+Dive into vgo
+Take a look at the possible future of vendoring
+19:00 11 Apr 2018
+Tags: golang, vendor, vgo
+
+Ilya Danilkin
+Server Developer, Gett RnD
+danilkin@gett.com
+https://gett.com/ru/
+@nezorflame
+
+* Short history of vendoring
+
+.background images/background.png
+
+- Mar 2012: Keith Rarick: [[https://github.com/kr/goven][Goven]] - copy deps into repo, updating import paths
+- *Sep*2013:* Keith Rarick: [[https://github.com/tools/godep][Godep]] - copy deps *without* updating import paths
+- Nov 2013: Go v1.2, import compatibility rule
+- Mar 2014: Gustavo Niemeyer: [[https://gopkg.in]] - stable, versioned APIs
+- Jun 2015: Go v1.5, Keith Rarick: /vendor proposal, experimental
+- *Aug*2015:* Dave Cheney: [[https://github.com/constabulary/gb][gb]], SemVer, Hyrum's law
+- *Jul*2016:* GopherCon 2016: committee for unified vendoring tool, Sam Boyer: [[https://github.com/golang/dep][golang/dep]]
+
+* Current state
+
+.background images/background.png
+
+Official experimental tool - [[https://golang.github.io/dep/][golang/dep]]
+Workflow:
+- Init: *dep*init*
+- Setup/pruning: *dep*ensure*
+- Update: *dep*ensure*-update*...*
+
+Honorable mentions:
+- [[https://github.com/Masterminds/glide]] - no longer developed
+- [[https://github.com/kardianos/govendor]]
+
+.image images/DigbyShadows.png
+
+* vgo
+
+.background images/background.png
+
+*20.02.2018* - [[https://research.swtch.com/vgo][vgo]] proposal by Russ Cox.
+
+Main principles:
+
+- import compatibility rule:
+
+    If an old package and a new package have the same import path,
+    the new package must be backwards-compatible with the old package.
+
+- minimal version selection - use the *oldest* allowed version
+- introduce Go module concept
+- retrofit into the existing go command
+- reproducible builds
+- *verifiable*and*verified* builds
+
+* Hello, world
+
+.background images/background.png
+
+.code code/hello.go
+
+.image images/hello_world.png
+
+* First build
+
+.background images/background.png
+
+Create *go.mod* and build the package:
+
+.code examples/init.sh
+
+*go.mod* contents:
+
+.code examples/go.mod
+
+* Full module set
+
+.background images/background.png
+
+.code examples/modules.sh
+
+Russ Cox has created the [[https://godoc.org/rsc.io/goversion][goversion]] utility, which can check the strings inside the binary.
+
+So, to check the binary modules:
+
+.code examples/goversion.sh
+
+* Next build
+
+.background images/background.png
+
+.code examples/next.sh
+
+It works!
+
+.image images/gopher.png
+
+.caption Source: [[https://www.flickr.com/photos/sloalan/569986220/in/photolist-Snk3C-otiixZ-r79Ua8-ot9cHM-qrBry7-otqgVd-roCjpg-od83Dc-ouQrLG-r7sda1-ot1owM-ov6SA3-osLUXQ-ouwcSY-qs5vHW-othEDD-roYrsa-rmLwAh-odeoks-oychVg-r74xSq-ov3saK-Sp96H-roWLEy-xgeNin-owapVH-roUvN2-oeWLYe-ouJ5HV-od83ag-r99DJT-otgJWL-rqo75P-r7zVWV-rpNe1m-ouJgwi-ousy35-trvdgZ-tJbaW6-otAwtF-odaVtL-qrBARq-ukfZY4-w9xn9C-x4f5xQ-x78yFz-oeHt6p-xHxmy1-xo6AL1-xDdvZF][Alan Schmierer / Flickr]]
+
+* Verify the build
+
+.background images/background.png
+
+For the module verification, create the *go.modverify* file in the same folder.
+It will be filled after the *vgo*build* command:
+
+.code examples/verify.sh
+
+Now, change any hash and see what happens:
+
+.code examples/verify-check.sh
+
+* goversion hash check
+
+.background images/background.png
+
+Check the hashes of binary modules with goversion:
+
+.code examples/verify-goversion.sh
+
+* Upgrading
+
+.background images/background.png
+
+.code examples/upgrade_check.sh
+
+Upgrade only *golang.org/x/text*:
+
+.code examples/upgrade.sh
+
+* Test package and dependencies
+
+.background images/background.png
+
+.code examples/test.sh
+
+.image images/flying.png
+
+* Upgrade all
+
+.background images/background.png
+
+.code examples/upgrade_all.sh
+
+* Check if something broke
+
+.background images/background.png
+
+.code examples/check.sh
+
+* Fix it - downgrade!
+
+List all tags for that pesky package:
+
+.code examples/downgrade-find.sh
+
+Get some older version (and test it with *vgo*test*all*):
+
+.code examples/downgrade.sh
+
+* Remove bad dependency
+
+.background images/background.png
+
+.code examples/remove_dep.sh
+
+Now check the *go.mod* and test all once again:
+
+.code examples/remove_dep-check.sh
+
+* Exclude dependency version
+
+.code examples/exclude.sh
+
+Now try updating all with *vgo*get*-u* and check the module list:
+
+.code examples/exclude-update.sh
+
+* Replace dependency locally
+
+.background images/background.png
+
+Get the package from its repo and modify it:
+
+.code examples/replace.sh
+
+Return to your project and tell *vgo* where the local version is:
+
+.code examples/replace-vgo.sh
+
+* Vendor compatibility
+
+.background images/background.png
+
+.code examples/vendor.sh
+
+Inside the *vgo.list* file:
+
+.code examples/vendor-list.sh
+
+* Try out vgo
+
+.background images/background.png
+
+- Start tagging versions in your repositories
+- Create and check in *go.mod* files, or...
+- ... dep, glide, govendor, glock, godep, godeps, govend, gvt -> go.mod
+- *git*clone*, *cd*, and start writing. Anywhere. *No*GOPATH*required*.
+
+.image images/harold.png
+
+* Resources
+
+.background images/background.png
+
+- Russ Cox: [[https://research.swtch.com/vgo][Go & Versioning]]
+- Golang wiki: [[https://github.com/golang/go/wiki/vgo][vgo]]
+- Brian Ketelsen: [[https://www.gophersnacks.com/programs/using-vgo-for-go-dependency-management][Using vgo for Go Dependency Management]]
+- Gophers Slack: [[https://gophers.slack.com/][#vgo channel]]

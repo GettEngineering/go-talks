@@ -2,6 +2,12 @@
 
 ## April 2018
 
+### GoWay Meetup v1.3
+
+Ilya Danilkin ([@nezorflame](https://github.com/nezorflame)): [Dive into vgo](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/04/goway-meetup-v1.3/dive-into-vgo/dive-into-vgo.slide)
+
+### Gett articles
+
 Konstantin Ryabov ([@thekostya](https://github.com/thekostya)): [How to use interfaces in Go](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/04/interfaces/interfaces.slide)
 
 ## March 2018

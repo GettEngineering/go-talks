@@ -1,0 +1,196 @@
+Execution tracing in Go 1.11
+Upcoming changes in runtime/trace package
+19:00 14 May 2018
+Tags: golang, runtime, tracing
+
+Ilya Danilkin
+Server Developer, Gett RnD
+danilkin@gett.com
+https://engineering.gett.com/
+@nezorflame
+
+* What is tracing?
+
+.background images/background.png
+
+    Tracing involves a specialized use of logging to record information about a program's execution.
+
+Main purposes:
+- *Debugging*
+- *Problem*diagnosis*
+
+Go execution tracer helps with diagnosing performance issues, like:
+- high latency
+- contention
+- poor parallelization
+
+* What does Go execution tracer do?
+
+.background images/background.png
+
+The execution trace captures a wide range of execution events, such as:
+- goroutine creation/blocking/unblocking
+- syscall enter/exit/block
+- GC-related events
+- changes of heap size
+- processor start/stop
+
+A precise nanosecond-precision timestamp and a stack trace is captured for most events.
+
+* How to use?
+
+.background images/background.png
+
+*1.* Using the *runtime/trace* package directly
+
+.code code/trace1.go
+
+.image images/DigbyShadows.png
+
+* How to use?
+
+.background images/background.png
+
+*2.* Using *go*test*-trace* flag
+
+    $ go test -trace=test.out
+
+.image images/test.png 230 _
+
+* How to use?
+
+.background images/background.png
+
+*3.* Using *net/http/pprof* handler registered at */debug/pprof/trace*
+
+.code code/trace3.go
+
+* How to analyze it?
+
+.background images/background.png
+
+The generated trace can be interpreted using *go*tool*trace*.
+
+.image images/trace1.png 230 _
+
+There's a GopherCon 2017 talk by *Rhys*Hiltner*, which explains how to use *go*tool*trace* in detail, link on the last page.
+
+* Main problems
+
+.background images/background.png
+
+*1.* It's almost impossible to associate user code with runtime events.
+
+*2.* It's hard to analyze what exactly has affected the performance and cause the 'fire':
+- is it GC?
+- is it scheduler?
+- is it I/O wait?
+
+.image images/this_is_fine.png 230 _
+
+* What's changed?
+
+.background images/background.png
+
+With *Go*1.11*, execution tracer will have a few new concepts, APIs and tracing capabilities:
+- user events and annotations;
+- association between user code and runtime;
+- possibility to associate execution tracer data with distributed traces.
+
+Execution tracer is introducing three types of user annotations using *context.Context*:
+- *log*messages*
+- *regions*
+- *tasks*
+
+* Log messages
+
+.background images/background.png
+
+*Log()* emits a timestamped message to the execution trace along with additional information, such as:
+- the category of the message;
+- which goroutine called Log.
+
+    trace.Log(ctx, "steamMilk", "Milk is ready")
+ 
+    When	        Elapsed	    Goroutine ID	Events
+    2.002049168     2.001940200	6               steamMilk=Milk is ready
+
+The execution tracer provides UIs to filter and group goroutines using the log category and the message supplied in Log.
+
+* Regions
+
+.background images/background.png
+
+    // Region is a region of code whose execution time interval is traced.
+    type Region struct {
+        id         uint64
+        regionType string
+    }
+
+*Regions* are sections in the code you want to collect tracing data for.
+A region starts and ends in the same goroutine, and can be a subregion of another region:
+
+    // orderID allows to identify a specific order
+    // among many cappuccino order region records.
+    ...
+    trace.WithRegion(ctx, "makeCappuccino", func() {
+        trace.Log(ctx, "orderID", orderID)
+        trace.WithRegion(ctx, "steamMilk", steamMilk)
+        trace.WithRegion(ctx, "extractCoffee", extractCoffee)
+        trace.WithRegion(ctx, "mixMilkCoffee", mixMilkCoffee)
+    })
+
+* Tasks
+
+.background images/background.png
+
+    // Task is a data type for tracing a user-defined, logical operation.
+    type Task struct {
+        id uint64
+    }
+
+A *task* is more of a logical group to categorize related regions together.
+
+A task can end in a different goroutine than the goroutine it started at:
+
+    ctx, task := trace.NewTask(ctx, "awesome task")
+    trace.WithRegion(ctx, prepWork)
+    // preparation of the task
+    go func() {  // continue processing the task in a separate goroutine.
+        defer task.End()
+        trace.WithRegion(ctx, remainingWork)
+    }
+
+* Demo time!
+
+.background images/background.png
+
+.image images/flying.png
+
+* Current limitations
+
+.background images/background.png
+
+*1.* Regions can only start and stop in the same goroutine
+
+*2.* The output format of the execution tracer is hard to parse
+
+*3.* *go*tool*trace* is the only canonical tool that can understand this format.
+
+* Try it yourself!
+
+.background images/background.png
+
+Even though the new capabilities will only be available in Go 1.11, you can give them a try by installing Go from tip: [[https://golang.org/doc/install/source][Installing Go from source]]
+
+.image images/coming_soon.png
+
+* Resources
+
+.background images/background.png
+
+- GopherCon 2017 - Rhys Hiltner: [[https://www.youtube.com/watch?v=V74JnrGTwKA][An Introduction to "go tool trace"]]
+- GopherAcademy: [[https://blog.gopheracademy.com/advent-2017/go-execution-tracer/][Go execution tracer]]
+- tip.golang.org: [[https://tip.golang.org/pkg/runtime/trace/][runtime/trace]]
+- JBD: [[https://medium.com/observability/debugging-latency-in-go-1-11-9f97a7910d68][Debugging Latency in Go 1.11]]
+- Ashley McNamara: [[https://github.com/ashleymcnamara/gophers][Gophers]]

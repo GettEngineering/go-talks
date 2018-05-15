@@ -15,7 +15,6 @@
 
 ### Gett internal talks and articles
 
-- Konstantin Ryabov ([@thekostya](https://github.com/thekostya)): [How to use interfaces in Go](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/04/interfaces/interfaces.slide)
 - Ilya Danilkin ([@nezorflame](https://github.com/nezorflame)): [Intro to the Go toolchain](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/04/go-toolchain/go-toolchain.slide)
 
 ## March 2018

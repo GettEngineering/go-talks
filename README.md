@@ -1,5 +1,11 @@
 # Gett & Juno Golang presentations
 
+## June 2018
+
+### Gett internal talks and articles
+- Maxim Schepelin ([@schepelin](https://github.com/schepelin))
+[Clean Architecture with Go](http://schepelin-clean-architecture-with-go.surge.sh/)
+
 ## May 2018
 
 ### Go Gett meetup

@@ -17,6 +17,10 @@
 
 ## April 2018
 
+### Avito Backend United #1
+
+- Mike Kabischev ([@mkabischev](https://github.com/mkabischev)): [Building observable applications](https://go-talks.appspot.com/github.com/mkabischev/go-talks/2018-04-18-avito/presentation.slide) 
+
 ### GoWay Meetup v1.3
 
 - Ilya Danilkin ([@nezorflame](https://github.com/nezorflame)): [Dive into vgo](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/04/goway-meetup-v1.3/dive-into-vgo/dive-into-vgo.slide)
@@ -24,6 +28,7 @@
 ### Gett internal talks and articles
 
 - Ilya Danilkin ([@nezorflame](https://github.com/nezorflame)): [Intro to the Go toolchain](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/04/go-toolchain/go-toolchain.slide)
+- Mike Kabischev ([@mkabischev](https://github.com/mkabischev)): [Ho to use Context](https://go-talks.appspot.com/github.com/mkabischev/go-talks/2018-04-27-go-gett-context/presentation.slide)
 
 ## March 2018
 

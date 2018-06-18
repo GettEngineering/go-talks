@@ -5,6 +5,8 @@
 ### Gett internal talks and articles
 - Maxim Schepelin ([@schepelin](https://github.com/schepelin))
 [Clean Architecture with Go](http://schepelin-clean-architecture-with-go.surge.sh/)
+- Dmitry Saveliev ([@dsaveliev](https://dsaveliev.github.io/))
+[Beyond the REST](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/06/api-protocols/main.slide)
 
 ## May 2018
 

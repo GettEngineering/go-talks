@@ -2,6 +2,10 @@
 
 ## June 2018
 
+### GoWay Meetup 1.4
+
+- Max Chechel ([@hexdigest](https://github.com/hexdigest)): [Testing Go Code With GoUnit and Minimock](https://raw.githubusercontent.com/gettaxi/go-talks/master/2018/06/gounit_minimock.pdf)
+
 ### Gett internal talks and articles
 - Maxim Schepelin ([@schepelin](https://github.com/schepelin)):
 [Clean Architecture with Go](http://schepelin-clean-architecture-with-go.surge.sh/)

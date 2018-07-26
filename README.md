@@ -1,5 +1,12 @@
 # Gett & Juno Golang presentations
 
+## Jule 2018
+
+### Go at DomClick
+
+- Dmitry Saveliev ([@dsaveliev](https://dsaveliev.github.io/)):
+[WebAssembly in Go 1.11](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/07/go-wasm/main.slide)
+
 ## June 2018
 
 ### GoWay Meetup 1.4
@@ -23,7 +30,7 @@
 
 ### Avito Backend United #1
 
-- Mike Kabischev ([@mkabischev](https://github.com/mkabischev)): [Building observable applications](https://go-talks.appspot.com/github.com/mkabischev/go-talks/2018-04-18-avito/presentation.slide) 
+- Mike Kabischev ([@mkabischev](https://github.com/mkabischev)): [Building observable applications](https://go-talks.appspot.com/github.com/mkabischev/go-talks/2018-04-18-avito/presentation.slide)
 
 ### GoWay Meetup v1.3
 

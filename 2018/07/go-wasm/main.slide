@@ -1,0 +1,138 @@
+WebAssembly in Go 1.11
+Upcoming changes in syscall/js package
+19:00 25 Jul 2018
+Tags: golang, wasm
+
+Dmitry Saveliev
+Backend Developer, Gett RnD
+saveliev.d@gett.com
+https://engineering.gett.com/
+
+
+* What is Web Assembly?
+
+.background images/background.png
+
+    A binary instruction format for a stack-based virtual machine.
+
+*History*
+
+- *PNaCl*
+- *Asm.js*
+- WebAssembly Community Group (as part of *W3C*)
+
+*Main*purposes*
+
+- Be fast, efficient, and portable
+- Be readable and debuggable
+- Keep secure
+- Don't break the web
+
+
+
+* Road to WebAssembly in Go
+
+.background images/background.png
+
+- *February*2017:* Issue for WebAssembly support was opened by *Brad*Fitzpatrick*
+- *November*2017:* *Richard*Musiol* (_GopherJS_) started to work on implementation
+- *August*2018:* WebAssembly support will be shipped with *Go*1.11*
+
+.image images/twitter.png 400 _
+
+
+
+* What inside syscall/js
+
+.background images/background.png
+
+Representation of the JavaScript value
+
+    type Value struct {
+    	ref ref
+    }
+
+Wrapper for Go functions
+
+    type Callback struct {
+    	Value
+    	id    uint32
+    }
+
+Representation of the JavaScript typed array
+
+    type TypedArray struct {
+    	Value
+    }
+
+
+
+* Calling JS from Go
+
+.background images/background.png
+
+*js.Value.Get()* and *js.Value.Set()* deals with *Object*'s properties
+*js.Value.Index()* and *js.Value.SetIndex()* deals with *Array*
+*js.Value.Call()* calls a method on an Object value
+*js.Value.Invoke()* invokes a function value
+*js.Global()* gives access to JS's global scope
+
+Example:
+
+.code hello.go
+
+
+
+* Callbacks machinery
+
+.background images/background.png
+
+js.Callback.Value:
+
+.code callback.js
+
+.image images/callbacks.png
+
+
+
+* Calling Go from JS
+
+.background images/background.png
+
+*NewCallback* returns a wrapped callback function
+Invoking the callback in JavaScript will queue the Go function fn for execution
+
+    js.NewCallback(fn func(args []Value)) Callback
+
+*NewEventCallback* same as NewCallback, but depends solely on JS event
+
+    js.NewEventCallback(flags EventCallbackFlag, fn func(event Value)) Callback
+
+*Release* frees up resources allocated for the callback
+
+    js.Callback.Release()
+
+
+
+* Demo: Video processing
+
+.image images/demo.png 550 _
+
+
+
+* Resume
+
+.background images/background.png
+
+- An absence of synchronous calls from JS
+- Performance problems
+- All goroutines inside single thread
+- Relatively big size of resulting blob
+
+
+
+
+
+
+
+

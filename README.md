@@ -39,7 +39,7 @@
 ### Gett internal talks and articles
 
 - Ilya Danilkin ([@nezorflame](https://github.com/nezorflame)): [Intro to the Go toolchain](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/04/go-toolchain/go-toolchain.slide)
-- Mike Kabischev ([@mkabischev](https://github.com/mkabischev)): [Ho to use Context](https://go-talks.appspot.com/github.com/mkabischev/go-talks/2018-04-27-go-gett-context/presentation.slide)
+- Mike Kabischev ([@mkabischev](https://github.com/mkabischev)): [How to use Context](https://go-talks.appspot.com/github.com/mkabischev/go-talks/2018-04-27-go-gett-context/presentation.slide)
 
 ## March 2018
 

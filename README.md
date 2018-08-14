@@ -1,11 +1,18 @@
 # Gett & Juno Golang presentations
 
-## Jule 2018
+## August 2018
+
+### Latest and greatest Golang additions @ Gett
+
+- Ilya Danilkin ([@nezorflame](https://github.com/nezorflame)): [Dive into vgo](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/08/dive-into-vgo-v2/dive-into-vgo.slide)
+- Dmitry Saveliev ([@dsaveliev](https://dsaveliev.github.io/)): [WebAssembly in Go 1.11](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/07/go-wasm/main.slide)
+- Vladislav Bogomolov ([@vladson](https://github.com/vladson)): [Execution tracing in Go 1.11](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/08/execution-tracing/main.slide)
+
+## July 2018
 
 ### Go at DomClick
 
-- Dmitry Saveliev ([@dsaveliev](https://dsaveliev.github.io/)):
-[WebAssembly in Go 1.11](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/07/go-wasm/main.slide)
+- Dmitry Saveliev ([@dsaveliev](https://dsaveliev.github.io/)): [WebAssembly in Go 1.11](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/07/go-wasm/main.slide)
 
 ## June 2018
 
@@ -14,10 +21,9 @@
 - Max Chechel ([@hexdigest](https://github.com/hexdigest)): [Testing Go Code With GoUnit and Minimock](https://github.com/gettaxi/go-talks/blob/master/2018/06/gounit_minimock.pdf)
 
 ### Gett internal talks and articles
-- Maxim Schepelin ([@schepelin](https://github.com/schepelin)):
-[Clean Architecture with Go](http://schepelin-clean-architecture-with-go.surge.sh/)
-- Dmitry Saveliev ([@dsaveliev](https://dsaveliev.github.io/)):
-[Beyond the REST](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/06/api-protocols/main.slide)
+
+- Maxim Schepelin ([@schepelin](https://github.com/schepelin)): [Clean Architecture with Go](http://schepelin-clean-architecture-with-go.surge.sh/)
+- Dmitry Saveliev ([@dsaveliev](https://dsaveliev.github.io/)): [Beyond the REST](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/06/api-protocols/main.slide)
 
 ## May 2018
 

@@ -8,6 +8,10 @@
 - Dmitry Saveliev ([@dsaveliev](https://dsaveliev.github.io/)): [WebAssembly in Go 1.11](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/07/go-wasm/main.slide)
 - Vladislav Bogomolov ([@vladson](https://github.com/vladson)): [Execution tracing in Go 1.11](https://talks.godoc.org/github.com/gettaxi/go-talks/2018/08/execution-tracing/main.slide)
 
+### Gett internal talks and articles
+
+- Maxim Schepelin ([@schepelin](https://github.com/schepelin)): [Concurrency pitfalls](https://schepelin-concurrency-pitfalls.surge.sh/)
+
 ## July 2018
 
 ### Go at DomClick

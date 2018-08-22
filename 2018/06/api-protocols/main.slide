@@ -1,0 +1,176 @@
+Beyond the REST
+gRPC / GraphQL approach to microservices
+19:00 13 Jun 2018
+Tags: api, rest, grpc, graphql, golang
+
+Dmitry Saveliev
+Server Developer, Gett R&D
+saveliev.d@gett.com
+https://engineering.gett.com/
+
+
+
+* Hello, RPC!
+
+.background images/background.png
+
+    POST /ws/hello HTTP/1.1
+    SOAPAction: ""
+    Accept: text/xml, multipart/related, text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+    Content-Type: text/xml; charset=utf-8
+    User-Agent: Java/1.6.0_13
+    Host: localhost:9999
+    Connection: keep-alive
+    Content-Length: 224
+
+    <?xml version="1.0" ?>
+    <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    	<S:Body>
+    		<ns2:getHelloWorldAsString xmlns:ns2="http://ws.example.com/">
+    			<arg0>Gopher</arg0>
+    		</ns2:getHelloWorldAsString>
+    	</S:Body>
+    </S:Envelope>
+
+
+
+* What is the REST about?
+.background images/background.png
+
+Roy Fielding's REST dissertation (2000)
+
+Six constraints of the REST architectural style:
+
+_1._Uniform_Interface_(HATEOAS)_
+_2._Stateless_
+_3._Cacheable_
+_4._Client-Server_
+_5._Layered_System_
+_6._Code_on_Demand_(optional)_
+
+*Hypermedia*As*The*Engine*Of*Application*State* as a key requirement to API
+
+
+
+* What is the REST about? (Part II)
+.background images/background.png
+
+Richardson Maturity Model (18 March 2010)
+
+.image images/glory.png
+
+.caption _API_Maturity_Model_ by [[https://www.martinfowler.com/articles/richardsonMaturityModel.html][Leonard Richardson]]
+
+
+
+* HTTP/1.1 418. I’m a teapot
+
+.background images/background.png
+
+.image images/teapot.gif 500 _
+
+.caption Teapot from [[https://google.com][Google]]
+
+
+
+* Problems with REST API
+
+.background images/background.png
+
+- Five HTTP Verbs aren't enough for business domain semantics
+- Mess with HTTP Codes (welcome custome error formats)
+- Problem with resources relationship (Scoped Includes)
+- Problems with search and pagination
+- Methods with non-REST semantics
+
+
+
+* More problems with REST API
+
+.background images/background.png
+
+- Versioniing, deprecations and API evolution
+- Synchronous nature of HTTP
+- Lack of schemes and contracts (Post-factum schemes)
+- Lack of standards (well, almost)
+
+_All_of_us_just_use_this_combo:_ *RPC*+*HTTP*verbs*+*Pretty*URLs*
+
+
+
+* The REST Specifications / Schemes
+
+.background images/background.png
+
+.link https://www.openapis.org OpenAPI
+_Industrial_standard:_Microsoft,_Google,_IBM,_CapitalOne,_etc._(30+_organizations)_
+.link https://swagger.io/ Swagger
+_Tools_for_implementing_the_specification_
+.link http://json-schema.org/ JSON Schema / Hyper-Schema
+_Payload_validation_
+
+
+
+* Requirements for the new API protocol
+
+.background images/background.png
+
+- Performance
+- Multi-platform support
+- Action based protocol
+- Support async requests
+- Implementation via strict formal description
+- Documentation via implementation
+- Agile approach to the deprecations
+- Interop with existing REST services
+
+* GraphQL Pros
+
+.background images/background.png
+
+.image images/graphql.png 120 _
+
+- Flexible queries
+- Smallest possible request
+- API evolution without versioning
+- Deprecations handling
+- HTTP as transport layer
+
+.link https://graphql.org
+
+* GraphQL Cons
+.background images/background.png
+
+.image images/graphql.png 120 _
+
+- Troubles with DB optimization
+- Schema should be written in the target language
+- Flexible queries don't help much for microservices environment
+- It's hard to implement resolvers for statically typed languages
+- Cumbersome and verbose implementation for Golang as result
+
+* gRPC Pros
+
+.background images/background.png
+
+.image images/grpc.png 60 _
+
+- Performance
+- Duplex data streams
+- Strongly typed IDL
+- Ability to keep single Protobuf collection for all services
+- gRPC REST Gateway
+- Maturity and adoption
+
+.link https://grpc.io
+.link https://github.com/grpc-ecosystem/grpc-gateway
+
+* gRPC Cons
+.background images/background.png
+
+.image images/grpc.png 60 _
+
+- Additional compilation step
+- Keep sync *proto* files and generated code
+- Gateway is slow
+- Files uploads

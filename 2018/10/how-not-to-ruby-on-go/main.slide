@@ -1,0 +1,459 @@
+How not to Ruby on Go
+06 October 2018
+
+Vladislav Bogomolov
+Backend Developer, Gett RnD
+bogomolov@gett.com
+https://engineering.gett.com/
+http://github.com/vladson
+@vladson4ik
+
+* Gett
+.background images/background.png
+
+Monolith drawbacks:
+- scalability
+- support
+- entanglement => new features development
+
+.image images/monolith.jpeg _ 600
+
+
+* Gett SOA
+.background images/background.png
+
+*Pros:*
+- allows continuous delivery / deployment
+- support R&D growth 
+- ability to scale or improve availability of specific parts independently
+- allow multiple technology stack work side by side
+
+*Cons:*
+- development & operational overhead
+- network overhead
+- more points of failure
+
+
+* Gett SOA
+.background images/background.png
+
+- services are built around business process
+- SRP single responsibility principle
+- rather small: 200 < LOC < 5000 and easy to rewrite in a month
+
+*State:*
+
+- first service on Node.js in 2014
+- now more than 130 (RoR and Go)
+- and still partially monolith
+
+.image images/pigs.gif _ 250
+
+* Gett Go
+.background images/background.png
+2015 First service on Go — locations service.
+
+.image images/gonode.png _ 700
+
+Late 2016 - Golang as a language of choice
+
+
+* Ruby
+.background images/background.png  
+
+- interpretable
+- object oriented
+- dynamically typed
+- dsl-oriented
+
+.image images/redTrain.jpg 300 _
+
+* Golang
+.background images/background.png
+
+- compilable
+- structured
+- strong static typed
+- no OOP in common way
+
+.image images/gettGopher.png _ 300
+
+* Golang
+.background images/background.png
+
+Specific features: 
+
+- embedded concurrency support
+
+ go YourAwesomeAsyncFunc(c *Context, payload map[string][string] )
+ 
+- package based code organization
+
+different directories, but same package
+
+
+/models/user.go
+
+  //user.go
+  package user
+  
+/services/user_service.go
+
+  //user_service.go
+  package user
+
+* Questions and decisions to make
+.background images/background.png
+
+- should I use any framework?
+- how to organize codebase?
+- what ORM should I use if any?
+- how to handle Exceptions?
+- how to deal with testing?
+  
+* Typical Gett service — Ruby on Go
+
+- Beego as a framework
+- Gorm for database management
+- Ginkgo for testing
+- shared library of Gett related or common code
+
+* What issues did we encountered?
+
+- hard to start thinking in Go paradigm
+- bad code leads to worse code
+- familiar approach result in messy code
+
+* Frameworks
+.background images/background.png
+.image images/abstractionsEverywhere.jpg _ 600
+
+* Beego
+.background images/background.png
+
+Beego is a Rails for Go
+
+new project initialization
+.image  images/newBeeApp.png _ 800
+
+* Run
+.background images/background.png
+
+.image images/runBee.png _ 900
+
+* Structure
+.background images/background.png
+
+- very Rails like
+- dedicated controllers, models, tests dirs
+
+.image images/awesomeTree.png  400 _
+
+
+* Init
+.background images/background.png
+
+  
+- package *init()* functions
+
+ package dao
+ 
+ func init() {
+   sql.Register("mysql", &MySQLDriver{})
+ }
+
+Init functions are called on package import 
+Overuse is a bad practice: impairs readability, makes implicit changes.
+
+* Problems
+- dsl like, magic based behaviour
+- overuse of *init()* magic
+- use Panic for error handling
+- possible problems with structure
+- problems with unneeded complexity
+
+* How to fix it? 
+.background images/background.png
+.image images/house-of-cards.jpg 500 _
+
+* How not to split responsibilities?
+
+Circular dependencies
+
+/post.go
+ package models
+ 
+ import "database"
+ 
+ type Post struct {
+   Field *sring `json:field`
+ } 
+ 
+ func (p *post)Publish() {
+   database.PostPost(p)
+ }
+
+/database/poster.go
+ package "database"
+ 
+ func Post(p *models.Post) error {
+ 
+ }
+
+* How not to split responsibilities?
+.background images/background.png
+
+Messy code and empty structs
+
+.code code/package.go  /START OMIT/,/END OMIT/
+
+- keep track of packages
+- Your code should reside in corresponding packages
+- don't try to emulate classes where you don't need them
+
+ 
+* DDD
+.background images/background.png
+
+Domain Driven Development 
+
+- Domain and domain models
+- Ubiquitous language
+- Bounded contexts
+
+Entity, Value object, Aggregate
+
+* Hexagon architecture
+
+.image images/hexagon.png _ 650
+
+Gophercon UK 2018 - Kat Zién: [[https://www.youtube.com/watch?v=VQym87o91f8][How do you structure your Go apps?]]
+
+* Actions
+.background images/background.png
+
+- migrating from Beego
+- changing shared libraries to use less dependencies
+- using DDD driven approach
+
+* Database
+.background images/background.png
+
+* What ORM should I use if any?
+
+.background images/background.png
+ 
+How it's done in Ruby?
+ 
+ class User < Activerecord::Base
+    has_many :clients
+    belongs_to :master
+    
+    validates :name, presence: true
+ ...
+ User.withClients().where(name: 'John').first
+ ...
+
+- convenient
+- lots of implicit stuff
+- lots of abstractions
+- mix of responsibility
+
+* Do you need them in Go?
+.background images/background.png
+
+You can use Gorm for instance. 
+ActiveRecord for Go
+
+Model:
+
+ type User struct {
+     gorm.Model
+     Birthday     time.Time
+     Age          int
+     Name         string  `gorm:"size:146"` 
+     Num          int     `gorm:"AUTO_INCREMENT"`
+ }
+
+And then query it like this
+ 
+ db.Where(map[string]interface{}{"name": "jinzhu", "age": 20}).Find(&users)
+ 
+ db.Create(&user)
+
+* What's wrong?
+
+- we have no control over SQL
+- Create and other `magic` methods accepts `interface{}` values
+
+ // Create insert the value into database
+ func (s *DB) Create(value interface{}) *DB {
+ 	scope := s.NewScope(value) ...
+ 	
+- domain models `care` about persistence
+
+* Raw sql
+.background images/background.png
+
+In many cases you need no ORM, just _"database/sql"_ package
+
+.code code/plain_sql.go  /START OMIT/,/END OMIT/
+
+* Migrations
+
+.background images/background.png
+- No common techniques
+
+- In Gett we use Swan, based on [[https://bitbucket.org/liamstask/goose][Goose]]
+
+1. File based migrations
+2. Dangerous migrations warning
+3. Support concurrent indices 
+
+ COMMIT;
+ CREATE INDEX CONCURRENTLY idx ON  table_name (field0, field1);
+ BEGIN;
+
+* Existing ORMs
+
+.background images/background.png
+- [[https://github.com/go-reform/reform][Reform]] 
+Code-generation based approach, thus provides usable interface. Data Mapper pattern. 
+
+problems:
+- mostly no problems
+- unless you have some
+- no migrations
+
+- [[https://github.com/jinzhu/gorm][Gorm]]
+Activerecord like ORM,
+problems:
+- mix of responsibility
+- unpredictable behaviour
+- usage of _interface{}_ values
+- no migrations
+
+* Actions
+.background images/background.png
+
+- consider using plain sql
+- consider Reform
+ 
+* Exceptions
+
+.background images/background.png
+ 
+* Exceptions in Ruby
+
+.background images/background.png
+
+.image images/rubyExceptions.png _ 300
+
+ begin do
+   ...
+ rescue ServiceFailError => e
+   ...
+ rescue DomainError => e
+ end
+ 
+* Mistakes for errors in Go
+.background images/background.png
+
+- create a set of custom errors.
+
+- use _defer_— _Panic_ — _recover_ as exception flow control
+
+.code code/panic.go  /START OMIT/,/END OMIT/
+
+
+Go way of errors
+ 
+ func A() {
+   val, err := B()
+   if err != nil {
+     // handle your error
+
+
+* Better error handling approach
+
+.background images/background.png
+
+Always use [[https://github.com/pkg/errors][pkg/errors]]
+
+.code code/errors.go /START OMIT/,/END OMIT/
+
+- preserves the initial cause
+- easy to follow through code
+
+* Actions
+.background images/background.png
+
+- use pkg/errors everywhere
+- removed places where we where relying on Panic
+ 
+
+* Testing
+
+.background images/background.png
+
+* Testing in Ruby
+.background images/background.png
+
+no brainer — *rspec* or *minitest*
+
+Should we end up with something like *rspec*?
+
+* Ginkgo
+
+[[https://onsi.github.io/ginkgo/][Ginkgo]]
+pros: BDD
+cons: 
+- not in a _Go way_
+- only suites accept (*testing.T)
+
+* Ginkgo
+
+.code code/ginkgo.go
+
+* Testing in Go
+.background images/background.png
+
+[[https://golang.org/pkg/testing/][pkg/testing]]
+- golang native 
+- benchmarks
+- every test is runnable
+
+ // test 
+ func TestTimeConsuming(t *testing.T) { ...
+ 
+ // benchmark
+ func BenchmarkHello(b *testing.B) {
+ 
+[[https://github.com/stretchr/testify][testify]]
+
+* Testing
+
+.code code/test.go
+
+* Summary
+.background images/background.png
+
+* Summary
+.background images/background.png
+
+- Explicit is better than implicit
+- Keep things simple
+- Use existing solutions and be compatible with standard library
+- Don't rely on frameworks
+- Use GoLang approach
+- Try It [[https://play.golang.org/][Now!]] 
+
+* Questions? Links.
+.background images/rrbg.png
+
+- Kat Zién for Gophercon UK 2018: [[https://www.youtube.com/watch?v=VQym87o91f8][How do you structure your Go apps?]]
+- David Gee:  [[http://arsonistgopher.com/golang/2017/07/19/golang-magic.html][Golang magic, package level vars, init, Init and global state]]
+
+- [[https://bitbucket.org/liamstask/goose][Goose]]
+- [[https://github.com/pkg/errors][pkg/errors]]
+- [[https://github.com/go-reform/reform][Reform]] 

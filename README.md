@@ -1,5 +1,9 @@
 # Gett & Juno Golang presentations
 
+## June 2019
+
+- Zaur Abasmirzoev ([@izaurio](https://github.com/izaurio)): []()
+
 ## August 2018
 
 ### Latest and greatest Golang additions @ Gett

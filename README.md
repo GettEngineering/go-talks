@@ -4,6 +4,8 @@
 
 - Zaur Abasmirzoev ([@izaurio](https://github.com/izaurio)): [Golang generator of client to sql database based on interface](https://github.com/GettEngineering/go-talks/blob/master/2019/06-nn/golang-generator-of-client-to-sql-database-based-on-interface.pdf)
 
+- Alexander Grunin ([@rootatdarkstar](https://github.com/rootatdarkstar)): [The borders of applicability of ORMs and data layer isolation patterns](https://github.com/GettEngineering/go-talks/blob/master/2019/06-nn/grunin_orm_usecases_and_data_layer_isolation_nn_06_19.pdf)
+
 ## August 2018
 
 ### Latest and greatest Golang additions @ Gett

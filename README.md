@@ -2,7 +2,7 @@
 
 ## June 2019
 
-- Zaur Abasmirzoev ([@izaurio](https://github.com/izaurio)): []()
+- Zaur Abasmirzoev ([@izaurio](https://github.com/izaurio)): [Golang generator of client to sql database based on interface](https://github.com/GettEngineering/go-talks/blob/master/2019/06-nn/golang-generator-of-client-to-sql-database-based-on-interface.pdf)
 
 ## August 2018
 

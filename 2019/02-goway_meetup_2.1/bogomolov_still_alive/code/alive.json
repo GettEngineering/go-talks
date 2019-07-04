@@ -1,0 +1,10 @@
+{
+  "path": "alive{format}",
+  "method_actions": {
+    "GET": {
+      "action": "reply",
+      "code": 200,
+      "data": "{\"status\":\"ok\",\"alive\":true,\"git_revision\":\"${revision}\"}"
+    }
+  }
+}

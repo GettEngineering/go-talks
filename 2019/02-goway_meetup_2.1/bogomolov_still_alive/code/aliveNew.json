@@ -1,0 +1,9 @@
+{
+  "alive":true,
+  "build_time":"2019/02/22_13:25:56", // HL
+  "commit":"1acf13de8d94dd8d6cafc42a5e4e272d357c247c", // HL
+  "git_branch":"vladson/test_location_fallback", // HL
+  "go_version":"go1.11.2",
+  "num_cpu":4,
+  "num_goroutine":17
+}

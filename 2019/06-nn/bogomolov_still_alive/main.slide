@@ -1,0 +1,353 @@
+Still Alive: Healthcheck в SOA by k8s
+27 June 2019
+
+Vladislav Bogomolov
+System Architect, Gett RnD
+bogomolov@gett.com
+https://engineering.gett.com/
+http://github.com/vladson
+@vladson4ik
+
+* Still Alive
+.background images/background.png
+
+.image images/cubeHeart.jpg _ 600
+
+* Gett
+.background images/background.png
+
+- more that 150 services
+- kubernetes introduced 1 year ago
+- over 10 backend teams
+- some services are transferred from team to team
+
+* Kubernetes
+.background images/background.png
+
+.image images/Kubernetes_small_logo.png _ 300
+
+: Наиболее хайповый фреймворк для контейнерной оркестровки
+: автоматизации развёртывания, масштабирования и управления контейнеризированными приложениями.
+: Поддерживает основные технологии контейнеризации, включая Docker, rkt
+
+* Nodes
+.background images/background.png
+
+.image images/k8s2nodes.png _ 500 
+
+- K8s manages one or more nodes
+- decides which pods to run on which node
+- node (kubelet) checks status of pods and restarts them if needed
+    
+* Pod
+.background images/background.png
+
+.image images/pods.svg _ 850
+
+- 1 or more containers
+- Distinct IP
+- shared volume
+
+: Каждый под состоит из одного (или больше) контейнеризированного приложения, обладает своим ip, может содержать шеред раздел.
+
+* Alive?
+.background images/background.png
+
+.image images/shrödingerscat.png _ 400
+
+What happens if something goes wrong?
+
+: Приложение может крешануться, что дальше?
+
+* Crash - Restart
+.background images/background.png
+
+.image images/portalORvalve.jpg 400 _
+
+- process crashed
+- liveness check failed
+
+* Readiness and Liveness probes
+.background images/background.png
+
+.image images/parkerSolarProbe.jpg _ 600
+
+: defined on containers
+: used by kubelet on each pods
+
+* Readiness
+.background images/background.png
+
+- should pass only when app is ready to accept traffic
+- may be used to stop accepting traffic on specific pod
+
+* Liveness
+.background images/background.png
+
+- should indicate that the app is doing well
+- may trigger termination and restart of the pod
+
+* Types of check
+.background images/background.png
+
+- Command
+- TCP check
+- HTTP(S) check
+
+:  
+
+* Command
+.background images/background.png
+
+.code code/liveness_file.yml
+
+* TCP
+.background images/background.png
+
+.code code/readiness_tcp.yml
+
+* HTTP
+.background images/background.png
+
+.code code/liveness_http.yml
+
+: best possible for web services
+: Place for demo if time and place
+
+* Lifecycle
+.background images/background.png
+
+Pending -> Ready -> Unready -> Ready -> Unhealthy
+
+.image images/portallFall.gif
+
+* Gett
+.background images/background.png
+
+* Gett
+.background images/background.png
+
+- 1 year on k8s
+- previously used AWS ELB
+- decided to reuse existing endpoint
+
+* Alive
+.background images/background.png
+
+.image images/areaAlive.png 300 _
+
+- http
+- works for ruby and go services
+- used for reporting
+
+* How was it done?
+.background images/background.png
+
+- part of the skeleton, predefined controller
+- part of the library included by default
+
+* Like this
+
+.code code/ssralive.go
+
+
+* Or like this
+
+.code code/alive.json
+
+* But mostly like this
+
+ import _ "github.com/gtforge/services_common_go/gett-ops/gett-beego"
+ ...
+
+* Purpose of the solution
+
+- readiness / liveness checks
+- report when the service was deployed
+- report which commit is used
+
+* Problem?
+.background images/background.png
+
+- no understanding what's going on
+- implementation is taken for granted
+- sometimes healthcheck is checking nothing
+- existing solution where highly coupled to deprecated parts of the stack
+
+: beego, services_common
+
+* Solution
+.background images/background.png
+
+- standalone framework agnostic library 
+- support existing standard (checks and reports)
+- require minimal configuration 
+- common checks library
+- add project specific checks on the fly in easy way.
+
+: ссылки на существующие будут в конце
+
+* Checks format
+.background images/background.png
+
+_Interface_
+ type Checker interface {
+   Ping(ctx context.Context) (map[string]interface(), error) 
+ }
+
+_Function_
+  type Pinger func(ctx context.Context) (map[string]interface{}, error)
+  
+: было выбрано для упрощения инициализации
+
+* Healthcheck
+.background images/background.png
+
+.code code/healthcheck.go  /START OMIT/,/END OMIT/
+
+* Implemented Pingers
+.background images/background.png
+
+- Default Info reporter
+- Git Branch reporter
+
+.code code/aliveNew.json 
+
+: ldflags
+
+* Failed variable linking
+.background images/background.png
+
+Build:
+  
+  go build -ldflags "-X github.com/gtforge/go-healthcheck.GitBranch=`git rev-parse --abbrev-ref HEAD`"
+  
+.code code/aliveFailed.json
+
+No warning from _go tool link_
+
+
+* Database
+.background images/background.png
+
+  healthcheck.MakeDbPinger(db, "main_db")
+  
+.code code/dbpinger.go  /START OMIT/,/END OMIT/
+
+
+All the others are implemented with similar approach
+
+* Usage
+.background images/background.png
+
+.code -edit code/healthcheckUsage.go  /START OMIT/,/END OMIT/
+
+* Remember TDD: make it failing first
+.background images/background.png
+
+- Default failing check
+    
+    return map[string]interface{}{
+               "implement_checks": []string{
+                "Make sure buildstamp and git variables linking",
+                "Add DB, Redis, MQ pingers if useful"
+               },
+            }, errors.New("Add checks!")
+
+- Check that fails if linking failed
+    
+    if GitBranch == "" {
+        return nil, errors.New("GitBranch not initialized")
+    }
+    return func(_ context.Context) (map[string]interface{}, error) {
+        return map[string]interface{}{
+            "git_branch": GitBranch,
+        }, nil
+    }, nil
+
+* Further improvements
+.background images/background.png
+
+- async checks
+- add more checks
+
+* Dangers of readiness and liveness overuse
+.background images/background.png
+
+.image images/cubeInTheHead.jpg _ 400
+
+* Dangers
+
+- configuration is not reflecting state
+    - web server for probes is different from main application's
+- external dependencies checked
+    - thirdparties, that you can not control 
+
+* Readiness
+.background images/background.png
+    
+    func() error {
+        if cache.Healthy {
+            return nil
+        }
+        return errors.New("Cache failed")
+    }
+     	
+
+* Readiness
+.background images/background.png
+
+- if startup related resource is unavailable — all the pods will stop receiving traffic
+- proper usecase
+cache failed -> unready pod -> refetch cache -> ready pod
+
+
+ 	
+* Liveness
+.background images/background.png
+
+    func() error {
+        conn, err := net.DialTimeout("tcp", addr, timeout)
+        if err != nil {
+            return err
+        }
+        return conn.Close()
+    }
+
+ 	
+* Liveness
+.background images/background.png
+    
+- only pod related errors
+- those that can be fixed by restart
+	
+* Existing libraries
+
+- [[https://github.com/InVisionApp/go-health][go-health by InVisionApp]]
+: powerful, interface based
+- [[https://github.com/heptiolabs/healthcheck][healthcheck by Heptiolabs]]
+: function based with predefined
+: metrics can be gathered 
+
+.image images/2guns.jpg _ 300
+.caption http://jackcgd.blogspot.com/2012/09/
+
+* Summary
+.background images/background.png
+
+- liveness/readiness should reflect application state
+- be careful with external dependencies inflicting _dead_ state
+- choose library or write your own
+- don't rely on defaults, you can forget to reflect useful state
+- consider default failing for your company's scaffold project
+ 	
+
+* Questions? Links.
+.background images/background.png
+
+- [[https://blog.colinbreck.com/kubernetes-liveness-and-readiness-probes-how-to-avoid-shooting-yourself-in-the-foot/][Liveness and Readiness Probes: How to Avoid Shooting Yourself in the Foot]]
+- [[https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/][Kubernetes: how to configure liveness and readiness probes]]
+
+
+.image images/still_alive_cake.png
+.caption All Portal ™ images and referencies are courtesy of Valve inc.

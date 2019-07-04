@@ -2,9 +2,25 @@
 
 ## June 2019
 
+### Golang Meetup Vol.4 at Nizhniy Novgorod 
+
 - Zaur Abasmirzoev ([@izaurio](https://github.com/izaurio)): [Golang generator of client to sql database based on interface](https://github.com/GettEngineering/go-talks/blob/master/2019/06-nn/golang-generator-of-client-to-sql-database-based-on-interface.pdf)
 
 - Alexander Grunin ([@rootatdarkstar](https://github.com/rootatdarkstar)): [The borders of applicability of ORMs and data layer isolation patterns](https://github.com/GettEngineering/go-talks/blob/master/2019/06-nn/grunin_orm_usecases_and_data_layer_isolation_nn_06_19.pdf)
+
+- Vladislav Bogomolov ([@vladson](https://github.com/vladson)): [Still Alive: readiness — liveness probes для k8s](https://talks.godoc.org/github.com/GettEngineering/go-talks/2019/06-nn/bogomolov_still_alive/main.slide)
+
+## February 2019
+
+### GoWay Meetup 2.1
+
+- Vladislav Bogomolov ([@vladson](https://github.com/vladson)): [Still Alive:  Унификация healthcheck для SOA](https://talks.godoc.org/github.com/GettEngineering/go-talks/2019/02/bogomolov_still_alive/main.slide)
+
+## October 2018
+
+### Ruby Russia 2018
+
+- Vladislav Bogomolov ([@vladson](https://github.com/vladson)): [Как не надо переходить с Ruby на Go](https://talks.godoc.org/github.com/GettEngineering/go-talks/2018/10/how-not-to-ruby-on-go/main.slide)
 
 ## August 2018
 

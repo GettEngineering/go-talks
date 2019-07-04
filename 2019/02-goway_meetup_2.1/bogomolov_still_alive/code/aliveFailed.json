@@ -1,0 +1,10 @@
+{
+  "alive":true,
+  "build_time":"",
+  "commit":"",
+  "git_branch": ""
+  "db_main":"OK",
+  "go_version":"go1.11.2",
+  "num_cpu":4,
+  "num_goroutine":20
+}
